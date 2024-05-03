@@ -5,9 +5,9 @@
 
 struct Color
 {
-    uint8_t red {0};
-    uint8_t green {0};
-    uint8_t blue {0};
+    uint16_t red {0};
+    uint16_t green {0};
+    uint16_t blue {0};
     REFL_STRUCT(Color, red, green, blue);
 };
 
@@ -51,7 +51,7 @@ int main(int argc, const char* argv[])
         255
     };
     NestedColor ncolor = {
-        .color = { 255, 255, 255 },
+        .color = { 0, 127, 255 },
         .x = 185
     };
     DumpObj(ncolor);
