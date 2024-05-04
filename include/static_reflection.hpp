@@ -10,16 +10,25 @@
 #define REFL_STRING(x) REFL_STR(x)
 #define REFL_CONCATE(x, y) x ## y
 #define REFL_EXPAND_CAT(x, y) REFL_CONCATE(x, y)
+#define REFL_LEFT_BRACKET (
+#define REFL_RIGHT_BRACKET )
+#define REFL_EAT_COMMA(...) , ##__VA_ARGS__
 
 #define REFL_ARGS_FILTER( \
     _0,  _1,  _2,  _3,  _4,  _5,  _6,  _7,  _8,  _9,  _10, _11, _12, _13, _14, _15,\
     _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31,\
     n, ...) n
 
-#define REFL_GET_ARGS_COUNT(...) REFL_EXPAND(REFL_ARGS_FILTER( \
-    unused, ##__VA_ARGS__, \
-    31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
-    15, 14, 13, 12, 11, 10, 9,  8,  7,  6,  5,  4,  3,  2,  1,  0))
+// 使用REFL_LEFT_BRACKET代替 ( 是为了调整展开顺序，让内部REFL_EAT_COMMA先展开
+// 不然unused REFL_EAT_COMMA(__VA_ARGS__)会被当成一个整体，导致获取参数个数一直为0
+#define REFL_GET_ARGS_COUNT(...) \
+    REFL_EXPAND(REFL_ARGS_FILTER \
+        REFL_LEFT_BRACKET \
+            unused REFL_EAT_COMMA(__VA_ARGS__), \
+            31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
+            15, 14, 13, 12, 11, 10, 9,  8,  7,  6,  5,  4,  3,  2,  1,  0 \
+        REFL_RIGHT_BRACKET \
+    )
 
 #define REFL_REPEAT_A0_0(...)
 #define REFL_REPEAT_A0_1(func, arg0, i, arg, ...) func(arg0, i, arg)
@@ -85,7 +94,10 @@
     func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_30(func, arg0, i+1, __VA_ARGS__))
 
 #define REFL_REPEAT_A0_ON(func, arg0, ...) \
-    REFL_EXPAND(REFL_EXPAND_CAT(REFL_REPEAT_A0_, REFL_GET_ARGS_COUNT(__VA_ARGS__))(func, arg0, 0, ##__VA_ARGS__))
+    REFL_EXPAND( \
+        REFL_EXPAND_CAT REFL_LEFT_BRACKET REFL_REPEAT_A0_, REFL_GET_ARGS_COUNT(__VA_ARGS__)) \
+        (func, arg0, 0, ##__VA_ARGS__) \
+    )
 
 // 生成结构体域元信息
 #define REFL_STRUCT_FIELD(Struct, i, member)                        \
@@ -102,7 +114,6 @@
     };
 
 // 反射结构体，生成结构体的元信息，用法如下(在结构体的public域内使用)
-// msvc使用传统预处理器时，反射空结构体宏展开有点问题
 // struct Point
 // {
 //     int x;

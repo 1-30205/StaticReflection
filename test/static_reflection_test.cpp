@@ -21,6 +21,13 @@ struct StructWithArrayField
     REFL_STRUCT(StructWithArrayField, x);
 };
 
+TEST(static_reflection_test, macro_test)
+{
+    static_assert(REFL_GET_ARGS_COUNT() == 0);
+    static_assert(REFL_GET_ARGS_COUNT(a) == 1);
+    static_assert(REFL_GET_ARGS_COUNT(a, b, c) == 3);
+}
+
 TEST(static_reflection_test, type_name_test)
 {
     EXPECT_STREQ(Refl::type_name<EmptyStruct>, "EmptyStruct");
@@ -61,14 +68,8 @@ TEST(static_reflection_test, field_type_test)
 
 TEST(static_reflection_test, field_ref_test)
 {
-    Point p = {
-        .x = 1,
-        .y = 1
-    };
-    const Point cp = {
-        .x = 2,
-        .y = 2
-    };
+    Point p = { 1, 1 };
+    const Point cp = { 2, 2 };
     Point& pr = p;
     const Point& cpr = cp;
 
@@ -114,10 +115,7 @@ TEST(static_reflection_test, field_ref_test)
 
 TEST(static_reflection_test, for_each_field_test)
 {
-    Point p = {
-        .x = 10,
-        .y = 100
-    };
+    Point p = { 10, 100 };
 
     std::stringstream ss;
     Refl::for_each_field(p,

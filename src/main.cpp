@@ -51,8 +51,8 @@ int main(int argc, const char* argv[])
         255
     };
     NestedColor ncolor = {
-        .color = { 0, 127, 255 },
-        .x = 185
+        { 0, 127, 255 },
+        185
     };
     DumpObj(ncolor);
     return 0;
