@@ -24,65 +24,65 @@
 #define REFL_REPEAT_A0_0(...)
 #define REFL_REPEAT_A0_1(func, arg0, i, arg, ...) func(arg0, i, arg)
 #define REFL_REPEAT_A0_2(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_1(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_1(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_3(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_2(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_2(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_4(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_3(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_3(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_5(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_4(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_4(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_6(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_5(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_5(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_7(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_6(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_6(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_8(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_7(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_7(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_9(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_8(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_8(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_10(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_9(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_9(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_11(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_10(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_10(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_12(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_11(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_11(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_13(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_12(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_12(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_14(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_13(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_13(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_15(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_14(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_14(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_16(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_15(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_15(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_17(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_16(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_16(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_18(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_17(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_17(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_19(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_18(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_18(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_20(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_19(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_19(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_21(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_20(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_20(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_22(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_21(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_21(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_23(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_22(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_22(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_24(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_23(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_23(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_25(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_24(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_24(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_26(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_25(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_25(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_27(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_26(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_26(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_28(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_27(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_27(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_29(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_28(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_28(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_30(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_29(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_29(func, arg0, i+1, __VA_ARGS__))
 #define REFL_REPEAT_A0_31(func, arg0, i, arg, ...) \
-    func(arg0, i, arg) REFL_EXPAND(REFL_EXPAND(REFL_REPEAT_A0_30(func, arg0, i+1, __VA_ARGS__)))
+    func(arg0, i, arg) REFL_EXPAND(REFL_REPEAT_A0_30(func, arg0, i+1, __VA_ARGS__))
 
 #define REFL_REPEAT_A0_ON(func, arg0, ...) \
     REFL_EXPAND(REFL_EXPAND_CAT(REFL_REPEAT_A0_, REFL_GET_ARGS_COUNT(__VA_ARGS__))(func, arg0, 0, ##__VA_ARGS__))
@@ -107,7 +107,7 @@
 // {
 //     int x;
 //     int y;
-//     REFL_STRUCT(Point, x, y); //
+//     REFL_STRUCT(Point, x, y);
 // };
 #define REFL_STRUCT(Struct, ...)                                    \
     struct rf_meta_info {                                           \
