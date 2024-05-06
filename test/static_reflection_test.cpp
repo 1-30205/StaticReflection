@@ -28,42 +28,42 @@ TEST(static_reflection_test, macro_test)
     static_assert(REFL_GET_ARGS_COUNT(a, b, c) == 3);
 }
 
-TEST(static_reflection_test, type_name_test)
+TEST(static_reflection_test, struct_name_test)
 {
-    EXPECT_STREQ(Refl::type_name<EmptyStruct>, "EmptyStruct");
-    EXPECT_STREQ(Refl::type_name<Point>, "Point");
-    EXPECT_STREQ(Refl::type_name<StructWithArrayField>, "StructWithArrayField");
+    EXPECT_STREQ(Refl::struct_name<EmptyStruct>, "EmptyStruct");
+    EXPECT_STREQ(Refl::struct_name<Point>, "Point");
+    EXPECT_STREQ(Refl::struct_name<StructWithArrayField>, "StructWithArrayField");
 }
 
 TEST(static_reflection_test, field_count_test)
 {
     static_assert(Refl::field_count<EmptyStruct> == 0);
-    static_assert(Refl::get_field_count<EmptyStruct>() == 0);
-
     static_assert(Refl::field_count<Point> == 2);
-    static_assert(Refl::get_field_count<Point>() == 2);
-
     static_assert(Refl::field_count<StructWithArrayField> == 1);
-    static_assert(Refl::get_field_count<StructWithArrayField>() == 1);
 }
 
 TEST(static_reflection_test, field_name_test)
 {
-    EXPECT_STREQ("x", (Refl::field<Point, 0>::name()));
-    EXPECT_STREQ("y", (Refl::field<Point, 1>::name()));
-
-    EXPECT_STREQ("x", (Refl::get_field_name<Point, 0>()));
     EXPECT_STREQ("x", (Refl::field_name<Point, 0>));
+    EXPECT_STREQ("y", (Refl::field_name<Point, 1>));
+
+    EXPECT_STREQ("x", (Refl::field<Point, 0>::name));
+    EXPECT_STREQ("y", (Refl::field<Point, 1>::name));
 
     EXPECT_STREQ("x", (Refl::field_name<StructWithArrayField, 0>));
+    EXPECT_STREQ("x", (Refl::field<StructWithArrayField, 0>::name));
 }
 
 TEST(static_reflection_test, field_type_test)
 {
-    static_assert(std::is_same_v<Refl::field<Point, 0>::type, int>);
     static_assert(std::is_same_v<Refl::field_t<Point, 0>, int>);
+    static_assert(std::is_same_v<Refl::field_t<Point, 1>, int>);
+
+    static_assert(std::is_same_v<Refl::field<Point, 0>::type, int>);
+    static_assert(std::is_same_v<Refl::field<Point, 1>::type, int>);
 
     static_assert(std::is_same_v<Refl::field_t<StructWithArrayField, 0>, int[3]>);
+    static_assert(std::is_same_v<Refl::field<StructWithArrayField, 0>::type, int[3]>);
 }
 
 TEST(static_reflection_test, field_ref_test)
