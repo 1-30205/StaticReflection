@@ -213,17 +213,14 @@
 
 // 生成结构体域元信息
 #define REFL_FIELD(i, Struct, member)                               \
-    template<typename T>                                            \
-    struct field<T, i> {                                            \
+    template<typename Unused>                                       \
+    struct field<i, Unused> {                                       \
         using type = decltype(Struct::member);                      \
         static constexpr const char* name = REFL_STRING(member);    \
-        constexpr explicit field(T&& obj)                           \
-            : m_obj(std::forward<T>(obj)) {}                        \
-        constexpr decltype(auto) ref() {                            \
-            return (std::forward<T>(m_obj).member);                 \
+        template <typename T>                                       \
+        static constexpr decltype(auto) ref(T&& obj) {              \
+            return (std::forward<T>(obj).member);                   \
         }                                                           \
-    private:                                                        \
-        T&& m_obj;                                                  \
     };
 
 #if REFL_GET_ARGS_COUNT() != 0
@@ -243,7 +240,7 @@
         static constexpr const char* name = REFL_STRING(Struct);    \
         static constexpr std::size_t field_count =                  \
             REFL_GET_ARGS_COUNT(__VA_ARGS__);                       \
-        template <typename, std::size_t> struct field;              \
+        template <std::size_t, typename> struct field;              \
         REFL_REPEAT_FIRST_ON(REFL_FIELD, Struct, __VA_ARGS__)       \
     }
 
@@ -265,7 +262,7 @@ template<typename T, typename = std::enable_if_t<is_reflected<std::decay_t<T>>::
 inline constexpr std::size_t field_count = T::rf_meta_info::field_count;
 
 template<typename T, std::size_t I, typename = std::enable_if_t<is_reflected<std::decay_t<T>>::value>>
-using field = typename std::decay_t<T>::rf_meta_info::template field<T, I>;
+using field = typename std::decay_t<T>::rf_meta_info::template field<I, void>;
 
 template<typename T, std::size_t I>
 using field_t = typename field<T, I>::type;
@@ -274,14 +271,14 @@ template<typename T, std::size_t I>
 inline constexpr const char* field_name = field<T, I>::name;
 
 template<std::size_t I, typename T>
-constexpr decltype(auto) get_field_ref(T&& obj)
+constexpr decltype(auto) field_ref(T&& obj)
 {
     using DT = std::decay_t<T>;
     static_assert(is_reflected<DT>::value,
         "T is not reflected, please use REFL_STRUCT in struct definition first");
     static_assert(I < field_count<DT>, "index of out range");
 
-    return field<T, I>(std::forward<T>(obj)).ref();
+    return field<T, I>::ref(std::forward<T>(obj));
 }
 
 template <typename T, typename F, std::size_t... Is>
@@ -291,7 +288,7 @@ constexpr void for_each_field_impl(T&& obj, F&& f, std::index_sequence<Is...>)
     static_assert(is_reflected<DT>::value,
         "T is not reflected, please use REFL_STRUCT in struct definition first");
 
-    (std::forward<F>(f)(Is, field_name<DT, Is>, get_field_ref<Is>(std::forward<T>(obj))), ...);
+    (std::forward<F>(f)(Is, field_name<DT, Is>, field_ref<Is>(std::forward<T>(obj))), ...);
 }
 
 template <typename T, typename F>

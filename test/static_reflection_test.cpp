@@ -73,44 +73,44 @@ TEST(static_reflection_test, field_ref_test)
     Point& pr = p;
     const Point& cpr = cp;
 
-    EXPECT_EQ(Refl::get_field_ref<0>(p), 1);
-    EXPECT_EQ(Refl::get_field_ref<0>(cp), 2);
-    EXPECT_EQ(Refl::get_field_ref<1>(pr), 1);
-    EXPECT_EQ(Refl::get_field_ref<1>(cpr), 2);
+    EXPECT_EQ(Refl::field_ref<0>(p), 1);
+    EXPECT_EQ(Refl::field_ref<0>(cp), 2);
+    EXPECT_EQ(Refl::field_ref<1>(pr), 1);
+    EXPECT_EQ(Refl::field_ref<1>(cpr), 2);
 
-    Refl::get_field_ref<0>(p) = 3;
-    EXPECT_EQ(Refl::get_field_ref<0>(p), 3);
-    EXPECT_EQ(Refl::get_field_ref<0>(pr), 3);
+    Refl::field_ref<0>(p) = 3;
+    EXPECT_EQ(Refl::field_ref<0>(p), 3);
+    EXPECT_EQ(Refl::field_ref<0>(pr), 3);
 
-    Refl::get_field_ref<1>(pr) = 4;
-    EXPECT_EQ(Refl::get_field_ref<1>(p), 4);
-    EXPECT_EQ(Refl::get_field_ref<1>(pr), 4);
+    Refl::field_ref<1>(pr) = 4;
+    EXPECT_EQ(Refl::field_ref<1>(p), 4);
+    EXPECT_EQ(Refl::field_ref<1>(pr), 4);
 
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(p)), int &>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(pr)), int &>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(cp)), const int &>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(cpr)), const int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(p)), int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(pr)), int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(cp)), const int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(cpr)), const int &>);
 
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(Point{1, 1})), int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(Point{1, 1})), int &&>);
 
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(std::move(p))), int &&>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(std::move(pr))), int &&>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(std::move(cp))), const int &&>);
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(std::move(cpr))), const int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<1>(std::move(p))), int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<1>(std::move(pr))), int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<1>(std::move(cp))), const int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<1>(std::move(cpr))), const int &&>);
 
     StructWithArrayField s = {
         {1, 2, 3}
     };
-    static_assert(std::is_same_v<decltype(Refl::get_field_ref<0>(s)), int (&)[3]>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(s)), int (&)[3]>);
 
-    decltype(auto) x = Refl::get_field_ref<0>(s);
+    decltype(auto) x = Refl::field_ref<0>(s);
     EXPECT_EQ(x[0], 1);
     EXPECT_EQ(x[1], 2);
     EXPECT_EQ(x[2], 3);
 
     x[2] = 4;
 
-    EXPECT_EQ(Refl::get_field_ref<0>(s)[2], 4);
+    EXPECT_EQ(Refl::field_ref<0>(s)[2], 4);
 }
 
 TEST(static_reflection_test, for_each_field_test)
