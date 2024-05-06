@@ -30,7 +30,7 @@
 
 #define REFL_INNER_EXPAND_ARGS(...) \
     REFL_EXPAND(REFL_ARGS_FILTER(__VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
         15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0))
 
 #define REFL_REMOVE_COMMA_IF_EMPTY(...) unused, __VA_ARGS__
@@ -107,7 +107,7 @@
 #define REFL_REPEAT_FIRST_ON(op, first, ...) \
     REFL_EXPAND( \
         REFL_PASTE(REFL_REPEAT_FIRST_, REFL_GET_ARGS_COUNT(__VA_ARGS__)) \
-        (op, 0, first, __VA_ARGS__)
+        (op, 0, first, __VA_ARGS__) \
     )
 
 // REFL_STRIP((int) x) => REFL_EAT(int) x => x
