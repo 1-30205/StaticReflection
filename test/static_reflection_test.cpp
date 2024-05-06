@@ -47,23 +47,15 @@ TEST(static_reflection_test, field_name_test)
     EXPECT_STREQ("x", (Refl::field_name<Point, 0>));
     EXPECT_STREQ("y", (Refl::field_name<Point, 1>));
 
-    EXPECT_STREQ("x", (Refl::field<Point, 0>::name));
-    EXPECT_STREQ("y", (Refl::field<Point, 1>::name));
-
     EXPECT_STREQ("x", (Refl::field_name<StructWithArrayField, 0>));
-    EXPECT_STREQ("x", (Refl::field<StructWithArrayField, 0>::name));
 }
 
 TEST(static_reflection_test, field_type_test)
 {
-    static_assert(std::is_same_v<Refl::field_t<Point, 0>, int>);
-    static_assert(std::is_same_v<Refl::field_t<Point, 1>, int>);
+    static_assert(std::is_same_v<Refl::field_type<Point, 0>, int>);
+    static_assert(std::is_same_v<Refl::field_type<Point, 1>, int>);
 
-    static_assert(std::is_same_v<Refl::field<Point, 0>::type, int>);
-    static_assert(std::is_same_v<Refl::field<Point, 1>::type, int>);
-
-    static_assert(std::is_same_v<Refl::field_t<StructWithArrayField, 0>, int[3]>);
-    static_assert(std::is_same_v<Refl::field<StructWithArrayField, 0>::type, int[3]>);
+    static_assert(std::is_same_v<Refl::field_type<StructWithArrayField, 0>, int[3]>);
 }
 
 TEST(static_reflection_test, field_ref_test)
@@ -119,9 +111,9 @@ TEST(static_reflection_test, for_each_field_test)
 
     std::stringstream ss;
     Refl::for_each_field(p,
-        [&ss](std::size_t index, const char* name, auto&& field_ref) {
+        [&ss](std::size_t index, const char* name, auto&& ref) {
             // 可以这么接着往下转发 std::forward<decltype(field_ref)>(field_ref)
-            ss << index << " " << name << " " << field_ref << std::endl;
+            ss << index << " " << name << " " << ref << std::endl;
         }
     );
     std::string result = ss.str();

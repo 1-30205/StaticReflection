@@ -255,17 +255,17 @@ struct is_reflected<T, std::void_t<typename T::rf_meta_info>> : std::true_type {
 template<typename T>
 inline constexpr bool is_reflected_v = is_reflected<T>::value;
 
-template<typename T, typename = std::enable_if_t<is_reflected<std::decay_t<T>>::value>>
+template<typename T, typename = std::enable_if_t<is_reflected<T>::value>>
 inline constexpr const char* struct_name = T::rf_meta_info::name;
 
-template<typename T, typename = std::enable_if_t<is_reflected<std::decay_t<T>>::value>>
+template<typename T, typename = std::enable_if_t<is_reflected<T>::value>>
 inline constexpr std::size_t field_count = T::rf_meta_info::field_count;
 
-template<typename T, std::size_t I, typename = std::enable_if_t<is_reflected<std::decay_t<T>>::value>>
-using field = typename std::decay_t<T>::rf_meta_info::template field<I, void>;
+template<typename T, std::size_t I, typename = std::enable_if_t<is_reflected<T>::value>>
+using field = typename T::rf_meta_info::template field<I, void>;
 
 template<typename T, std::size_t I>
-using field_t = typename field<T, I>::type;
+using field_type = typename field<T, I>::type;
 
 template<typename T, std::size_t I>
 inline constexpr const char* field_name = field<T, I>::name;
@@ -278,7 +278,7 @@ constexpr decltype(auto) field_ref(T&& obj)
         "T is not reflected, please use REFL_STRUCT in struct definition first");
     static_assert(I < field_count<DT>, "index of out range");
 
-    return field<T, I>::ref(std::forward<T>(obj));
+    return field<DT, I>::ref(std::forward<T>(obj));
 }
 
 template <typename T, typename F, std::size_t... Is>
