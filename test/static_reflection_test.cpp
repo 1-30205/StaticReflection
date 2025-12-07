@@ -123,3 +123,9 @@ TEST(static_reflection_test, for_each_field_test)
 
     EXPECT_EQ(result, expectResult);
 }
+
+int main(int argc, char **argv) {
+    printf("Running main() from %s\n", __FILE__);
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -11,6 +11,6 @@ PUBLIC
 
 target_link_libraries(${PROJECT_NAME}
 PUBLIC
-    GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+    GTest::gtest GTest::gmock)
 
 add_test(AllTestsInMain ${PROJECT_NAME})
