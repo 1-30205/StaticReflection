@@ -21,6 +21,18 @@ struct StructWithArrayField
     REFL_STRUCT(StructWithArrayField, x);
 };
 
+class PrivateField
+{
+public:
+    PrivateField(int x) : x(x) {}
+
+private:
+    int x;
+
+public:
+    REFL_STRUCT(PrivateField, x);
+};
+
 TEST(static_reflection_test, macro_test)
 {
     static_assert(REFL_GET_ARGS_COUNT() == 0);
@@ -103,6 +115,33 @@ TEST(static_reflection_test, field_ref_test)
     x[2] = 4;
 
     EXPECT_EQ(Refl::field_ref<0>(s)[2], 4);
+}
+
+TEST(static_reflection_test, private_field_test)
+{
+    static_assert(std::is_same_v<Refl::field_type<PrivateField, 0>, int>);
+
+    PrivateField pf(10);
+    EXPECT_EQ(Refl::field_ref<0>(pf), 10);
+    Refl::field_ref<0>(pf) = 20;
+    EXPECT_EQ(Refl::field_ref<0>(pf), 20);
+
+    PrivateField p(1);
+    const PrivateField cp(2);
+    PrivateField& pr = p;
+    const PrivateField& cpr = cp;
+
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(p)), int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(pr)), int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(cp)), const int &>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(cpr)), const int &>);
+
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(Point{1, 1})), int &&>);
+
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(p))), int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(pr))), int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(cp))), const int &&>);
+    static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(cpr))), const int &&>);
 }
 
 TEST(static_reflection_test, for_each_field_test)

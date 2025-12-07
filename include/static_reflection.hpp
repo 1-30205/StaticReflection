@@ -212,12 +212,12 @@
 #endif // 编译器判断结束
 
 // 生成结构体域元信息
-#define REFL_FIELD(i, Struct, member)                               \
+#define REFL_FIELD(I, Struct, member)                               \
     template<typename Unused>                                       \
-    struct field<i, Unused> {                                       \
+    struct field<I, Unused> {                                       \
         using type = decltype(Struct::member);                      \
         static constexpr const char* name = REFL_STRING(member);    \
-        template <typename T>                                       \
+        template<typename T>                                        \
         static constexpr decltype(auto) ref(T&& obj) {              \
             return (std::forward<T>(obj).member);                   \
         }                                                           \
@@ -227,7 +227,7 @@
 #warning "REFL_GET_ARGS_COUNT() != 0, reflect empty struct may result compile error"
 #endif
 
-// 反射结构体，生成结构体的元信息，用法如下(在结构体的public域内使用)
+// 反射结构体，生成结构体的元信息，用法如下(宏需要在结构体的public域内使用，被反射的成员变量不需要为public):
 // struct Point
 // {
 //     int x;
@@ -240,9 +240,11 @@
         static constexpr const char* name = REFL_STRING(Struct);    \
         static constexpr std::size_t field_count =                  \
             REFL_GET_ARGS_COUNT(__VA_ARGS__);                       \
-        template <std::size_t, typename> struct field;              \
+        template<std::size_t, typename> struct field;               \
         REFL_REPEAT_FIRST_ON(REFL_FIELD, Struct, __VA_ARGS__)       \
-    }
+    };                                                              \
+    template<std::size_t I, typename Unused>                        \
+    friend struct rf_meta_info::field
 
 namespace Refl {
 
@@ -281,7 +283,7 @@ constexpr decltype(auto) field_ref(T&& obj)
     return field<DT, I>::ref(std::forward<T>(obj));
 }
 
-template <typename T, typename F, std::size_t... Is>
+template<typename T, typename F, std::size_t... Is>
 constexpr void for_each_field_impl(T&& obj, F&& f, std::index_sequence<Is...>)
 {
     using DT = std::decay_t<T>;
@@ -291,7 +293,7 @@ constexpr void for_each_field_impl(T&& obj, F&& f, std::index_sequence<Is...>)
     (std::forward<F>(f)(Is, field_name<DT, Is>, field_ref<Is>(std::forward<T>(obj))), ...);
 }
 
-template <typename T, typename F>
+template<typename T, typename F>
 constexpr void for_each_field(T&& obj, F&& f)
 {
     using DT = std::decay_t<T>;
