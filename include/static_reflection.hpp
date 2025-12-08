@@ -232,9 +232,9 @@
 // {
 //     int x;
 //     int y;
-//     REFL_STRUCT(Point, x, y);
+//     REFL_CLASS(Point, x, y);
 // };
-#define REFL_STRUCT(Struct, ...)                                    \
+#define REFL_CLASS(Struct, ...)                                    \
     struct rf_meta_info {                                           \
         using type = Struct;                                        \
         static constexpr const char* name = REFL_STRING(Struct);    \
@@ -277,7 +277,7 @@ constexpr decltype(auto) field_ref(T&& obj)
 {
     using DT = std::decay_t<T>;
     static_assert(is_reflected<DT>::value,
-        "T is not reflected, please use REFL_STRUCT in struct definition first");
+        "T is not reflected, please use REFL_CLASS in struct definition first");
     static_assert(I < field_count<DT>, "index of out range");
 
     return field<DT, I>::ref(std::forward<T>(obj));
@@ -288,7 +288,7 @@ constexpr void for_each_field_impl(T&& obj, F&& f, std::index_sequence<Is...>)
 {
     using DT = std::decay_t<T>;
     static_assert(is_reflected<DT>::value,
-        "T is not reflected, please use REFL_STRUCT in struct definition first");
+        "T is not reflected, please use REFL_CLASS in struct definition first");
 
     (std::forward<F>(f)(Is, field_name<DT, Is>, field_ref<Is>(std::forward<T>(obj))), ...);
 }
@@ -298,7 +298,7 @@ constexpr void for_each_field(T&& obj, F&& f)
 {
     using DT = std::decay_t<T>;
     static_assert(is_reflected<DT>::value,
-        "T is not reflected, please use REFL_STRUCT in struct definition first");
+        "T is not reflected, please use REFL_CLASS in struct definition first");
 
     for_each_field_impl(std::forward<T>(obj), std::forward<F>(f),
         std::make_index_sequence<field_count<DT>>{});

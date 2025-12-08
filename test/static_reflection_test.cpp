@@ -5,20 +5,20 @@
 
 struct EmptyStruct
 {
-    REFL_STRUCT(EmptyStruct);
+    REFL_CLASS(EmptyStruct);
 };
 
 struct Point
 {
     int x;
     int y;
-    REFL_STRUCT(Point, x, y);
+    REFL_CLASS(Point, x, y);
 };
 
 struct StructWithArrayField
 {
     int x[3];
-    REFL_STRUCT(StructWithArrayField, x);
+    REFL_CLASS(StructWithArrayField, x);
 };
 
 class PrivateField
@@ -30,7 +30,7 @@ private:
     int x;
 
 public:
-    REFL_STRUCT(PrivateField, x);
+    REFL_CLASS(PrivateField, x);
 };
 
 TEST(static_reflection_test, macro_test)

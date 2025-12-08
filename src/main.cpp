@@ -1,21 +1,20 @@
 #include <iostream>
 #include <static_reflection.hpp>
 #include <type_traits>
-#include <utility>
 
 struct Color
 {
     uint16_t red {0};
     uint16_t green {0};
     uint16_t blue {0};
-    REFL_STRUCT(Color, red, green, blue);
+    REFL_CLASS(Color, red, green, blue);
 };
 
 struct NestedColor
 {
     Color color;
     int x {0};
-    REFL_STRUCT(NestedColor, color, x);
+    REFL_CLASS(NestedColor, color, x);
 };
 
 template<typename T>
