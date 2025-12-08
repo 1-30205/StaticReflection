@@ -2,6 +2,7 @@
 #include <sstream>
 #include <type_traits>
 #include <static_reflection.hpp>
+#include <compile_time_str.hpp>
 
 struct EmptyStruct
 {
@@ -161,6 +162,78 @@ TEST(static_reflection_test, for_each_field_test)
     "1 y 100\n";
 
     EXPECT_EQ(result, expectResult);
+}
+
+TEST(compile_time_str_test, make_compile_string_test)
+{
+    using namespace Refl::StrUtil;
+    static_assert(std::is_same_v<cts_pop_front_t<compile_time_str<'a'>>, empty_cts>);
+    static_assert(std::is_same_v<cts_pop_front_t<compile_time_str<'a', 'b'>>, compile_time_str<'b'>>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<>, '0'>, empty_cts>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<>, 'a'>, empty_cts>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1'>, '0'>, compile_time_str<'1'>>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1'>, '0'>, empty_cts>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1','2','3'>, '0'>, compile_time_str<'1','2','3'>>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1','2','3'>, '0'>, empty_cts>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1','2','3'>, '1'>, empty_cts>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1','2','3'>, '1'>, compile_time_str<'2','3'>>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1','2','3'>, '2'>, compile_time_str<'1'>>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1','2','3'>, '2'>, compile_time_str<'3'>>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1','2','3'>, '3'>, compile_time_str<'1','2'>>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1','2','3'>, '3'>, empty_cts>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'1','2','3'>, '4'>, compile_time_str<'1','2','3'>>);
+    static_assert(std::is_same_v<cts_split_once_t2<compile_time_str<'1','2','3'>, '4'>, empty_cts>);
+
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'h','e','l','l','o'>, '\0'>,
+        compile_time_str<'h','e','l','l','o'>>);
+    static_assert(std::is_same_v<cts_split_once_t1<compile_time_str<'h','e','l','l','o','\0','\0','\0','\0','\0'>, '\0'>,
+        compile_time_str<'h','e','l','l','o'>>);
+
+    static_assert(std::is_same_v<MKCTS(""), empty_cts>);
+    static_assert(std::is_same_v<MkCts(""), empty_cts>); // bug
+
+    static_assert(std::is_same_v<MKCTS("h"), compile_time_str<'h'>>);
+    static_assert(std::is_same_v<MkCts("h"), compile_time_str<'h'>>);
+
+    static_assert(std::is_same_v<MKCTS("hi"), compile_time_str<'h', 'i'>>);
+    static_assert(std::is_same_v<MkCts("hi"), compile_time_str<'h', 'i'>>);
+
+    static_assert(std::is_same_v<MKCTS("she"), compile_time_str<'s','h','e'>>);
+    static_assert(std::is_same_v<MkCts("she"), MKCTS("she")>);
+
+    static_assert(std::is_same_v<
+        MKCTS("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"),
+        compile_time_str<
+            '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+            '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+            '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+            '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'
+        >>);
+    static_assert(std::is_same_v<
+        MkCts("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"),
+        MKCTS("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")
+    >);
+
+    auto helloworld = MkCtsObj("helloworld");
+    static_assert(std::is_same_v<decltype(helloworld), compile_time_str<'h','e','l','l','o','w','o','r','l','d'>>);
+    auto empty = MkCtsObj("");
+    static_assert(std::is_same_v<decltype(empty), compile_time_str<>>);
+}
+
+TEST(compile_time_str_test, cts_size_test)
+{
+    using namespace Refl::StrUtil;
+    static_assert(cts_size_v<MKCTS("")> == 0);
+
+    using namespace Refl::StrUtil;
+    static_assert(cts_size_v<MKCTS("a")> == 1);
 }
 
 int main(int argc, char **argv) {
