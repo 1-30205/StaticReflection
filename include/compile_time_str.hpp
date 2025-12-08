@@ -201,7 +201,7 @@ namespace Refl
 
     // 相等 -------------------------------------------------------------------------------------------------------------
     template <typename CTS1, typename CTS2,
-        std::enable_if<is_cts_v<CTS1> && is_cts_v<CTS2>, int> = 0>
+        std::enable_if_t<is_cts_v<CTS1> && is_cts_v<CTS2>, int> = 0>
     struct cts_equal : std::is_same<CTS1, CTS2> {};
 
     template <typename CTS1, typename CTS2>
