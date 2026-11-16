@@ -34,6 +34,23 @@ public:
     REFL_CLASS(PrivateField, x);
 };
 
+struct ReflectedBase
+{
+    int a;
+    REFL_CLASS(ReflectedBase, a);
+};
+
+struct UnreflectedDerived : ReflectedBase
+{
+    int b;
+};
+
+struct ReflectedDerived : ReflectedBase
+{
+    int b;
+    REFL_CLASS(ReflectedDerived, b);
+};
+
 TEST(static_reflection_test, macro_test)
 {
     static_assert(REFL_GET_ARGS_COUNT() == 0);
@@ -143,6 +160,21 @@ TEST(static_reflection_test, private_field_test)
     static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(pr))), int &&>);
     static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(cp))), const int &&>);
     static_assert(std::is_same_v<decltype(Refl::field_ref<0>(std::move(cpr))), const int &&>);
+}
+
+TEST(static_reflection_test, is_reflected_test)
+{
+    static_assert(Refl::is_reflected_v<Point>);
+    static_assert(!Refl::is_reflected_v<int>);
+    static_assert(!Refl::is_reflected_v<UnreflectedDerived>);
+    static_assert(Refl::is_reflected_v<ReflectedDerived>);
+    static_assert(Refl::field_count<ReflectedDerived> == 1);
+    EXPECT_STREQ(Refl::struct_name<ReflectedDerived>, "ReflectedDerived");
+
+    ReflectedDerived d{};
+    Refl::field_ref<0>(d) = 42;
+    EXPECT_EQ(d.b, 42);
+    EXPECT_EQ(d.a, 0);
 }
 
 TEST(static_reflection_test, for_each_field_test)

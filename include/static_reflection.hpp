@@ -1,5 +1,5 @@
-#ifndef _STATIC_REFLECTION_H_
-#define _STATIC_REFLECTION_H_
+#ifndef STATIC_REFLECTION_H_
+#define STATIC_REFLECTION_H_
 
 #include <cstddef>
 #include <type_traits>
@@ -118,20 +118,20 @@
 // 判断空可变参处理策略
 #if REFL_VA_OPT_SUPPORTED // c++20标准支持__VA_OPT__
 #define REFL_GET_ARGS_COUNT(...) \
-    REFL_ARGS_FILTER(unused, __VA_OPT__(, ) __VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 \
+    REFL_ARGS_FILTER(unused __VA_OPT__(,) __VA_ARGS__, \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
         15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
 
 #elif defined(__GNUC__) // 不支持__VA_OPT__，但使用的是gcc或者clang，支持##__VA_ARGS__的用法
 #define REFL_GET_ARGS_COUNT(...) \
     REFL_ARGS_FILTER(unused, ##__VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
         15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
 
 #else // 其他情况，REFL_GET_ARGS_COUNT()可能返回1
 #define REFL_GET_ARGS_COUNT(...) \
     REFL_ARGS_FILTER(unused, __VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
         15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
 
 #endif // 判断空可变参处理策略结束
@@ -224,7 +224,7 @@
     };
 
 #if REFL_GET_ARGS_COUNT() != 0
-#warning "REFL_GET_ARGS_COUNT() != 0, reflect empty struct may result compile error"
+#error "REFL_GET_ARGS_COUNT() != 0: this compiler cannot count an empty __VA_ARGS__"
 #endif
 
 // 反射结构体，生成结构体的元信息，用法如下(宏需要在结构体的public域内使用，被反射的成员变量不需要为public):
@@ -242,17 +242,21 @@
             REFL_GET_ARGS_COUNT(__VA_ARGS__);                       \
         template<std::size_t, typename> struct field;               \
         REFL_REPEAT_FIRST_ON(REFL_FIELD, Struct, __VA_ARGS__)       \
-    };                                                              \
-    template<std::size_t I, typename Unused>                        \
-    friend struct rf_meta_info::field
+    }
 
 namespace Refl {
+
+template<typename T>
+using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
 template<typename T, typename = void>
 struct is_reflected: std::false_type {};
 
 template<typename T>
-struct is_reflected<T, std::void_t<typename T::rf_meta_info>> : std::true_type {};
+struct is_reflected<T, std::void_t<
+    typename T::rf_meta_info,
+    std::enable_if_t<std::is_same_v<typename T::rf_meta_info::type, T>>>>
+    : std::true_type {};
 
 template<typename T>
 inline constexpr bool is_reflected_v = is_reflected<T>::value;
@@ -275,7 +279,7 @@ inline constexpr const char* field_name = field<T, I>::name;
 template<std::size_t I, typename T>
 constexpr decltype(auto) field_ref(T&& obj)
 {
-    using DT = std::decay_t<T>;
+    using DT = remove_cvref_t<T>;
     static_assert(is_reflected<DT>::value,
         "T is not reflected, please use REFL_CLASS in struct definition first");
     static_assert(I < field_count<DT>, "index of out range");
@@ -286,17 +290,17 @@ constexpr decltype(auto) field_ref(T&& obj)
 template<typename T, typename F, std::size_t... Is>
 constexpr void for_each_field_impl(T&& obj, F&& f, std::index_sequence<Is...>)
 {
-    using DT = std::decay_t<T>;
+    using DT = remove_cvref_t<T>;
     static_assert(is_reflected<DT>::value,
         "T is not reflected, please use REFL_CLASS in struct definition first");
 
-    (std::forward<F>(f)(Is, field_name<DT, Is>, field_ref<Is>(std::forward<T>(obj))), ...);
+    (f(Is, field_name<DT, Is>, field_ref<Is>(std::forward<T>(obj))), ...);
 }
 
 template<typename T, typename F>
 constexpr void for_each_field(T&& obj, F&& f)
 {
-    using DT = std::decay_t<T>;
+    using DT = remove_cvref_t<T>;
     static_assert(is_reflected<DT>::value,
         "T is not reflected, please use REFL_CLASS in struct definition first");
 
@@ -306,4 +310,4 @@ constexpr void for_each_field(T&& obj, F&& f)
 
 } // namespace Refl
 
-#endif // _STATIC_REFLECTION_H_
+#endif // STATIC_REFLECTION_H_
