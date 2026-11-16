@@ -10,9 +10,6 @@
 #define REFL_STRING(x) REFL_STR(x)
 #define REFL_CONCAT(x, y) x ## y
 #define REFL_PASTE(x, y) REFL_CONCAT(x, y)
-#define REFL_EAT(...)
-// REFL_PAIR((int) x) => REFL_EXPAND(int) x => int x
-#define REFL_PAIR(x) REFL_EXPAND x
 
 #define REFL_GET_3RD_ARG(a, b, c, ...) c
 #define REFL_VA_OPT_SUPPORTED_I(...) REFL_GET_3RD_ARG(__VA_OPT__(, ), 1, 0)
@@ -37,6 +34,31 @@
 
 #define REFL_GET_ARGS_COUNT(...) \
     REFL_INNER_EXPAND_ARGS(REFL_REMOVE_COMMA_IF_EMPTY(__VA_ARGS__))
+
+#else // 其他编译器(一般就是gcc、clang和使用了标准预处理器的msvc了)
+
+// 判断空可变参处理策略
+#if REFL_VA_OPT_SUPPORTED // c++20标准支持__VA_OPT__
+#define REFL_GET_ARGS_COUNT(...) \
+    REFL_ARGS_FILTER(unused __VA_OPT__(,) __VA_ARGS__, \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
+        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
+
+#elif defined(__GNUC__) // 不支持__VA_OPT__，但使用的是gcc或者clang，支持##__VA_ARGS__的用法
+#define REFL_GET_ARGS_COUNT(...) \
+    REFL_ARGS_FILTER(unused, ##__VA_ARGS__, \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
+        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
+
+#else // 其他情况，REFL_GET_ARGS_COUNT()可能返回1
+#define REFL_GET_ARGS_COUNT(...) \
+    REFL_ARGS_FILTER(unused, __VA_ARGS__, \
+        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
+        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
+
+#endif // 判断空可变参处理策略结束
+
+#endif // 编译器判断结束
 
 #define REFL_REPEAT_FIRST_0(op, i, first, arg)
 #define REFL_REPEAT_FIRST_1(op, i, first, arg, ...) \
@@ -101,115 +123,12 @@
     op(i, first, arg) REFL_EXPAND(REFL_REPEAT_FIRST_29(op, i+1, first, __VA_ARGS__))
 #define REFL_REPEAT_FIRST_31(op, i, first, arg, ...) \
     op(i, first, arg) REFL_EXPAND(REFL_REPEAT_FIRST_30(op, i+1, first, __VA_ARGS__))
-#define REFL_REPEAT_FIRST_32(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_EXPAND(REFL_REPEAT_FIRST_31(op, i+1, first, __VA_ARGS__))
 
 #define REFL_REPEAT_FIRST_ON(op, first, ...) \
     REFL_EXPAND( \
         REFL_PASTE(REFL_REPEAT_FIRST_, REFL_GET_ARGS_COUNT(__VA_ARGS__)) \
         (op, 0, first, __VA_ARGS__) \
     )
-
-// REFL_STRIP((int) x) => REFL_EAT(int) x => x
-#define REFL_STRIP(x) REFL_EXPAND(REFL_EAT x)
-
-#else // 其他编译器(一般就是gcc、clang和使用了标准预处理器的msvc了)
-
-// 判断空可变参处理策略
-#if REFL_VA_OPT_SUPPORTED // c++20标准支持__VA_OPT__
-#define REFL_GET_ARGS_COUNT(...) \
-    REFL_ARGS_FILTER(unused __VA_OPT__(,) __VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
-        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
-
-#elif defined(__GNUC__) // 不支持__VA_OPT__，但使用的是gcc或者clang，支持##__VA_ARGS__的用法
-#define REFL_GET_ARGS_COUNT(...) \
-    REFL_ARGS_FILTER(unused, ##__VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
-        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
-
-#else // 其他情况，REFL_GET_ARGS_COUNT()可能返回1
-#define REFL_GET_ARGS_COUNT(...) \
-    REFL_ARGS_FILTER(unused, __VA_ARGS__, \
-        31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, \
-        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0)
-
-#endif // 判断空可变参处理策略结束
-
-#define REFL_REPEAT_FIRST_0(op, i, first, arg)
-#define REFL_REPEAT_FIRST_1(op, i, first, arg, ...) \
-    op(i, first, arg)
-#define REFL_REPEAT_FIRST_2(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_1(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_3(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_2(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_4(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_3(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_5(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_4(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_6(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_5(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_7(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_6(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_8(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_7(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_9(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_8(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_10(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_9(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_11(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_10(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_12(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_11(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_13(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_12(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_14(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_13(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_15(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_14(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_16(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_15(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_17(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_16(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_18(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_17(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_19(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_18(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_20(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_19(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_21(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_20(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_22(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_21(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_23(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_22(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_24(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_23(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_25(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_24(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_26(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_25(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_27(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_26(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_28(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_27(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_29(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_28(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_30(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_29(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_31(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_30(op, i+1, first, __VA_ARGS__)
-#define REFL_REPEAT_FIRST_32(op, i, first, arg, ...) \
-    op(i, first, arg) REFL_REPEAT_FIRST_31(op, i+1, first, __VA_ARGS__)
-
-#define REFL_REPEAT_FIRST_ON(op, first, ...) \
-    REFL_PASTE(REFL_REPEAT_FIRST_, REFL_GET_ARGS_COUNT(__VA_ARGS__)) \
-    (op, 0, first, __VA_ARGS__)
-
-// REFL_STRIP((int) x) => REFL_EAT(int) x => x
-#define REFL_STRIP(x) REFL_EAT x
-
-#endif // 编译器判断结束
 
 // 生成结构体域元信息
 #define REFL_FIELD(I, Struct, member)                               \
